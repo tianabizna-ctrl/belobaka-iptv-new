@@ -268,7 +268,7 @@
         "eslint": "^9.8.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-import": "2.32.0",
-        "eslint-plugin-playwright": "^1.6.2",
+        "eslint-plugin-playwright": "^2.12.2",
         "express": "5.3.0",
         "express-rate-limit": "8.3.0",
         "github-slugger": "2.0.0",
