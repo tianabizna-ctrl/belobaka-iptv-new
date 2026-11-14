@@ -1,4 +1,9 @@
-# IPTVnator - IPTV Player Application
+# Belobaka IPTV
+
+> **This is a personal fork of [IPTVnator](https://github.com/4gray/iptvnator) by [4gray](https://github.com/4gray), maintained by [tianabizna-ctrl](https://github.com/tianabizna-ctrl).**
+> It is an unofficial fork and is **not affiliated with, endorsed by, or supported by** the upstream IPTVnator project.
+> Upstream documentation, downloads and support live at [4gray.github.io/iptvnator](https://4gray.github.io/iptvnator/) and [github.com/4gray/iptvnator](https://github.com/4gray/iptvnator).
+> This fork retains the original project's [license](./LICENSE.md) and [trademark](./TRADEMARK.md) terms; all upstream copyright remains with its authors.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/4gray/iptvnator/electron/src/assets/icons/favicon.256x256.png" alt="IPTVnator icon" title="Free IPTV player application" />
