@@ -1,0 +1,191 @@
+@use '../../styles/portal-layout' as portal;
+
+@include portal.live-layout;
+
+.sidebar {
+    > app-global-favorites-list {
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+        transition: opacity var(--collection-reload-dim-duration, 160ms) ease;
+    }
+
+    // Reload feedback dims the channel list only; the player in
+    // .content-container keeps playing at full opacity.
+    &--reloading > app-global-favorites-list {
+        opacity: var(--collection-reload-dim-opacity, 0.6);
+    }
+}
+
+.content-container {
+    background: var(--app-content-bg);
+
+    &:has(> app-portal-empty-state) {
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.video-player {
+    background: #000;
+    display: flex;
+    flex-direction: column;
+
+    &--radio {
+        position: relative;
+        background: var(--app-content-bg);
+    }
+
+    > app-vjs-player,
+    > app-html-video-player,
+    > app-art-player,
+    > app-audio-player {
+        flex: 1;
+        min-height: 0;
+        display: block;
+    }
+}
+
+.radio-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 4;
+    color: var(--mat-sys-on-surface);
+    background: color-mix(
+        in srgb,
+        var(--mat-sys-surface-container-high) 72%,
+        transparent
+    );
+    backdrop-filter: blur(12px);
+}
+
+.epg {
+    border-top: 1px solid var(--app-separator);
+    background: var(--app-content-bg);
+    display: flex;
+    flex-direction: column;
+}
+
+.epg-content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    > app-epg-timeline,
+    > app-epg-list-view {
+        flex: 1;
+        min-height: 0;
+    }
+}
+
+// ─── Mobile live overlay ────────────────────────────────────────────────────
+// The phone expectation mirrors the M3U player: the rail floats translucent
+// over a full-bleed player instead of stacking above it, and once a channel is
+// picked it slides away until asked back. Overrides the shared live-layout's
+// stacked phone treatment locally — this surface renders the video edge to
+// edge, the shared mixin's 42vh rail block would leave the player a strip.
+@media (max-width: 640px), (pointer: coarse) and (max-width: 1024px) {
+    :host {
+        flex-direction: row !important;
+        position: relative;
+        --live-overlay-rail-width: min(92vw, 440px);
+    }
+
+    .sidebar {
+        position: absolute;
+        inset: 0 auto 0 0;
+        z-index: 70;
+        width: var(--live-overlay-rail-width) !important;
+        min-width: 0 !important;
+        max-width: var(--live-overlay-rail-width);
+        max-height: none;
+        min-height: 0;
+        flex-shrink: 0;
+        border: none;
+        background: linear-gradient(
+            90deg,
+            rgba(8, 10, 14, 0.66),
+            rgba(8, 10, 14, 0.5) 68%,
+            rgba(8, 10, 14, 0.18) 90%,
+            transparent
+        );
+        opacity: 1;
+        transform: translateX(0);
+        transition:
+            opacity 240ms ease,
+            transform 240ms ease;
+
+        &.sidebar-collapsed,
+        &.sidebar-overlay-hidden {
+            width: var(--live-overlay-rail-width) !important;
+            min-width: 0 !important;
+            max-width: var(--live-overlay-rail-width);
+            max-height: none;
+            min-height: 0;
+            border: none;
+        }
+
+        // Picked a channel: dismissed until the restore chevron or a tap on
+        // the stage asks for the list back.
+        &.sidebar-overlay-hidden {
+            opacity: 0;
+            transform: translateX(-6%);
+            pointer-events: none;
+        }
+
+        .resize-handle {
+            display: none;
+        }
+    }
+
+    // The rail's own surface is transparent — the overlay gradient above is
+    // the only backdrop — so its opaque panel chrome must not paint a slab.
+    ::ng-deep .sidebar app-global-favorites-list,
+    ::ng-deep .sidebar .favorites-list,
+    ::ng-deep .sidebar .favorites-list-header,
+    ::ng-deep .sidebar .favorites-channels {
+        background: transparent;
+    }
+
+    .content-container {
+        height: auto;
+        min-width: 0;
+    }
+}
+
+// The restore chevron mirrors the M3U player's `.sidebar-restore` affordance:
+// shown while the overlay rail is hidden by playback, it brings the list back.
+.sidebar-restore {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 6;
+    background: rgba(128, 128, 128, 0.18);
+    color: var(--mat-sys-on-surface, rgba(255, 255, 255, 0.75));
+    box-shadow: none;
+    opacity: 0.7;
+    transition:
+        opacity 0.15s ease,
+        background 0.15s ease;
+
+    .mat-mdc-button-persistent-ripple,
+    .mat-mdc-button-touch-target {
+        display: none;
+    }
+
+    mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+    }
+
+    &:hover,
+    &:focus-visible {
+        opacity: 1;
+        background: rgba(128, 128, 128, 0.32);
+    }
+}

@@ -1,0 +1,92 @@
+@if (supported()) {
+    <button
+        type="button"
+        class="transcode-launcher"
+        data-test-id="transcode-launcher"
+        [class.active]="opened()"
+        [class.transcode-launcher--visible]="launcherVisible()"
+        [attr.aria-hidden]="launcherVisible() ? null : 'true'"
+        [attr.tabindex]="launcherVisible() ? null : -1"
+        (click)="toggle()"
+        aria-haspopup="dialog"
+        [attr.aria-expanded]="opened()"
+        title="Local transcoding (FFmpeg)"
+    >
+        <span class="transcode-launcher-badge" aria-hidden="true">HQ</span>
+        <span class="transcode-launcher-text">Transcode</span>
+    </button>
+
+    @if (opened()) {
+        <section
+            class="transcode-panel"
+            role="dialog"
+            aria-label="Local transcoding"
+            data-test-id="transcode-panel"
+        >
+            <header class="transcode-header">
+                <h2>Local transcoding</h2>
+                <button
+                    type="button"
+                    class="transcode-close"
+                    (click)="close()"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+            </header>
+
+            <p class="transcode-hint">
+                FFmpeg re-encodes this stream on this device.
+            </p>
+
+            <div class="transcode-grid" role="group" aria-label="Resolution">
+                @for (resolution of resolutions; track resolution.id) {
+                    <button
+                        type="button"
+                        class="transcode-option"
+                        data-test-id="transcode-option"
+                        [class.active]="activeId() === resolution.id"
+                        [disabled]="status() === 'starting'"
+                        [attr.aria-pressed]="activeId() === resolution.id"
+                        [title]="resolution.dimensions"
+                        (click)="select(resolution)"
+                    >
+                        <span class="transcode-option-label">{{
+                            resolution.label
+                        }}</span>
+                        <span class="transcode-option-dims">{{
+                            resolution.dimensions
+                        }}</span>
+                    </button>
+                }
+            </div>
+
+            @if (busy()) {
+                <div class="transcode-status">
+                    <progress [value]="progress()" max="100"></progress>
+                    <span class="transcode-percent">{{ progress() }}%</span>
+                    <button
+                        type="button"
+                        class="transcode-stop"
+                        (click)="stop()"
+                    >
+                        Stop
+                    </button>
+                </div>
+            }
+
+            @if (error(); as message) {
+                <p class="transcode-error">{{ message }}</p>
+            }
+
+            @if (outputUrl()) {
+                <video
+                    #preview
+                    class="transcode-preview"
+                    controls
+                    playsinline
+                ></video>
+            }
+        </section>
+    }
+}
